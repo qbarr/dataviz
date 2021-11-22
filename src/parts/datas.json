@@ -1,0 +1,296 @@
+[
+    {
+        "datasetid": "qualite-de-lair-mesuree-dans-la-station-chatelet",
+        "recordid": "3588a86ff7a28807dbb375d347a0b8495634813b",
+        "fields": {
+            "c2cha4": "499",
+            "tcha4": "18,7",
+            "dateheure": "2021-11-15T01:00:00+01:00",
+            "hycha4": "50,1",
+            "10cha4": "43",
+            "n2cha4": "24",
+            "nocha4": "13"
+        },
+        "record_timestamp": "2021-11-17T09:27:52.944+01:00"
+    },
+    {
+        "datasetid": "qualite-de-lair-mesuree-dans-la-station-chatelet",
+        "recordid": "0180891c05d06a936b81a7d8b1d41cc0b1fea71d",
+        "fields": {
+            "c2cha4": "506",
+            "tcha4": "18,8",
+            "dateheure": "2021-11-15T00:00:00+01:00",
+            "hycha4": "51,5",
+            "10cha4": "40",
+            "n2cha4": "25",
+            "nocha4": "16"
+        },
+        "record_timestamp": "2021-11-17T09:27:52.944+01:00"
+    },
+    {
+        "datasetid": "qualite-de-lair-mesuree-dans-la-station-chatelet",
+        "recordid": "29a34219022e2676251ff8e0477e9b991e2ef312",
+        "fields": {
+            "c2cha4": "521",
+            "tcha4": "19,1",
+            "dateheure": "2021-11-14T23:00:00+01:00",
+            "hycha4": "53,8",
+            "10cha4": "35",
+            "n2cha4": "27",
+            "nocha4": "13"
+        },
+        "record_timestamp": "2021-11-17T09:27:52.944+01:00"
+    },
+    {
+        "datasetid": "qualite-de-lair-mesuree-dans-la-station-chatelet",
+        "recordid": "7326891f746a63719633f374894f7c49dee543af",
+        "fields": {
+            "c2cha4": "541",
+            "tcha4": "19,1",
+            "dateheure": "2021-11-14T22:00:00+01:00",
+            "hycha4": "54,4",
+            "10cha4": "48",
+            "n2cha4": "28",
+            "nocha4": "12"
+        },
+        "record_timestamp": "2021-11-17T09:27:52.944+01:00"
+    },
+    {
+        "datasetid": "qualite-de-lair-mesuree-dans-la-station-chatelet",
+        "recordid": "11af78bae52339a28de20082ba0b82ec78f54e65",
+        "fields": {
+            "c2cha4": "580",
+            "tcha4": "19",
+            "dateheure": "2021-11-14T21:00:00+01:00",
+            "hycha4": "55,2",
+            "10cha4": "50",
+            "n2cha4": "26",
+            "nocha4": "10"
+        },
+        "record_timestamp": "2021-11-17T09:27:52.944+01:00"
+    },
+    {
+        "datasetid": "qualite-de-lair-mesuree-dans-la-station-chatelet",
+        "recordid": "578ce0de8cd0145dceacfd7743e85210ce60e93a",
+        "fields": {
+            "c2cha4": "597",
+            "tcha4": "19,1",
+            "dateheure": "2021-11-14T20:00:00+01:00",
+            "hycha4": "55,2",
+            "10cha4": "51",
+            "n2cha4": "28",
+            "nocha4": "11"
+        },
+        "record_timestamp": "2021-11-17T09:27:52.944+01:00"
+    },
+    {
+        "datasetid": "qualite-de-lair-mesuree-dans-la-station-chatelet",
+        "recordid": "2fa0bf31fb0a24f7718b2c9d3f2a93b86816e818",
+        "fields": {
+            "c2cha4": "602",
+            "tcha4": "19,1",
+            "dateheure": "2021-11-14T19:00:00+01:00",
+            "hycha4": "55,4",
+            "10cha4": "58",
+            "n2cha4": "26",
+            "nocha4": "9"
+        },
+        "record_timestamp": "2021-11-17T09:27:52.944+01:00"
+    },
+    {
+        "datasetid": "qualite-de-lair-mesuree-dans-la-station-chatelet",
+        "recordid": "dbf0f9dc5b14d04fec9de969a6405eded2448fb6",
+        "fields": {
+            "c2cha4": "581",
+            "tcha4": "18,8",
+            "dateheure": "2021-11-14T18:00:00+01:00",
+            "hycha4": "56,2",
+            "10cha4": "59",
+            "n2cha4": "22",
+            "nocha4": "8"
+        },
+        "record_timestamp": "2021-11-17T09:27:52.944+01:00"
+    },
+    {
+        "datasetid": "qualite-de-lair-mesuree-dans-la-station-chatelet",
+        "recordid": "2e8b7eba2c34ebea63f49b080621be783fa95760",
+        "fields": {
+            "c2cha4": "565",
+            "tcha4": "18,8",
+            "dateheure": "2021-11-14T17:00:00+01:00",
+            "hycha4": "56,1",
+            "10cha4": "45",
+            "n2cha4": "19",
+            "nocha4": "6"
+        },
+        "record_timestamp": "2021-11-17T09:27:52.944+01:00"
+    },
+    {
+        "datasetid": "qualite-de-lair-mesuree-dans-la-station-chatelet",
+        "recordid": "c613b66b7e599613ca190c82d04d8bec10e6e534",
+        "fields": {
+            "c2cha4": "529",
+            "tcha4": "18,8",
+            "dateheure": "2021-11-14T16:00:00+01:00",
+            "hycha4": "56,9",
+            "10cha4": "34",
+            "n2cha4": "18",
+            "nocha4": "5"
+        },
+        "record_timestamp": "2021-11-17T09:27:52.944+01:00"
+    },
+    {
+        "datasetid": "qualite-de-lair-mesuree-dans-la-station-chatelet",
+        "recordid": "24d01a638d20bd104fabcbe1e9493598574f52bf",
+        "fields": {
+            "c2cha4": "525",
+            "tcha4": "19",
+            "dateheure": "2021-11-14T15:00:00+01:00",
+            "hycha4": "58,2",
+            "10cha4": "39",
+            "n2cha4": "21",
+            "nocha4": "6"
+        },
+        "record_timestamp": "2021-11-17T09:27:52.944+01:00"
+    },
+    {
+        "datasetid": "qualite-de-lair-mesuree-dans-la-station-chatelet",
+        "recordid": "dad2fd44669eed22136b1147fa948f9af3a3b562",
+        "fields": {
+            "c2cha4": "516",
+            "tcha4": "19,1",
+            "dateheure": "2021-11-14T14:00:00+01:00",
+            "hycha4": "57,9",
+            "10cha4": "28",
+            "n2cha4": "20",
+            "nocha4": "5"
+        },
+        "record_timestamp": "2021-11-17T09:27:52.944+01:00"
+    },
+    {
+        "datasetid": "qualite-de-lair-mesuree-dans-la-station-chatelet",
+        "recordid": "29325f41bd38470b20423f6c3ff1a0b9e316dd8a",
+        "fields": {
+            "c2cha4": "455",
+            "tcha4": "19,6",
+            "dateheure": "2021-11-14T13:00:00+01:00",
+            "hycha4": "55,8",
+            "10cha4": "9",
+            "n2cha4": "18",
+            "nocha4": "4"
+        },
+        "record_timestamp": "2021-11-17T09:27:52.944+01:00"
+    },
+    {
+        "datasetid": "qualite-de-lair-mesuree-dans-la-station-chatelet",
+        "recordid": "13e139a4c2a7d2e70bb088790bbe8b14627e0135",
+        "fields": {
+            "c2cha4": "444",
+            "tcha4": "19,5",
+            "dateheure": "2021-11-14T12:00:00+01:00",
+            "hycha4": "56",
+            "10cha4": "7",
+            "n2cha4": "17",
+            "nocha4": "5"
+        },
+        "record_timestamp": "2021-11-17T09:27:52.944+01:00"
+    },
+    {
+        "datasetid": "qualite-de-lair-mesuree-dans-la-station-chatelet",
+        "recordid": "391e8b698f958bb0ec20ad208017967a8bed0c96",
+        "fields": {
+            "c2cha4": "440",
+            "tcha4": "19,3",
+            "dateheure": "2021-11-14T11:00:00+01:00",
+            "hycha4": "55,6",
+            "10cha4": "6",
+            "n2cha4": "19",
+            "nocha4": "5"
+        },
+        "record_timestamp": "2021-11-17T09:27:52.944+01:00"
+    },
+    {
+        "datasetid": "qualite-de-lair-mesuree-dans-la-station-chatelet",
+        "recordid": "d0789fa8a7dcac17679544c100a52c25333c3cc9",
+        "fields": {
+            "c2cha4": "441",
+            "tcha4": "19,6",
+            "dateheure": "2021-11-14T10:00:00+01:00",
+            "hycha4": "56,1",
+            "10cha4": "9",
+            "n2cha4": "17",
+            "nocha4": "4"
+        },
+        "record_timestamp": "2021-11-17T09:27:52.944+01:00"
+    },
+    {
+        "datasetid": "qualite-de-lair-mesuree-dans-la-station-chatelet",
+        "recordid": "72a590e88a4497dc9c07616bd12c46ca5c58a663",
+        "fields": {
+            "c2cha4": "438",
+            "tcha4": "19,4",
+            "dateheure": "2021-11-14T09:00:00+01:00",
+            "hycha4": "56,7",
+            "10cha4": "11",
+            "n2cha4": "14",
+            "nocha4": "4"
+        },
+        "record_timestamp": "2021-11-17T09:27:52.944+01:00"
+    },
+    {
+        "datasetid": "qualite-de-lair-mesuree-dans-la-station-chatelet",
+        "recordid": "1e8057ae3b9c58fe47f606e7e2ef35530a5692ad",
+        "fields": {
+            "c2cha4": "440",
+            "tcha4": "19,4",
+            "dateheure": "2021-11-14T08:00:00+01:00",
+            "hycha4": "56,1",
+            "10cha4": "11",
+            "n2cha4": "14",
+            "nocha4": "4"
+        },
+        "record_timestamp": "2021-11-17T09:27:52.944+01:00"
+    },
+    {
+        "datasetid": "qualite-de-lair-mesuree-dans-la-station-chatelet",
+        "recordid": "48c30b95fe4168457f090c814866e354081702e2",
+        "fields": {
+            "c2cha4": "441",
+            "tcha4": "19,5",
+            "dateheure": "2021-11-14T07:00:00+01:00",
+            "hycha4": "55,6",
+            "10cha4": "7",
+            "n2cha4": "15",
+            "nocha4": "4"
+        },
+        "record_timestamp": "2021-11-17T09:27:52.944+01:00"
+    },
+    {
+        "datasetid": "qualite-de-lair-mesuree-dans-la-station-chatelet",
+        "recordid": "ce0ef0ff56c61a0bb17bf045a897f171b763b265",
+        "fields": {
+            "c2cha4": "437",
+            "tcha4": "19,6",
+            "dateheure": "2021-11-14T06:00:00+01:00",
+            "hycha4": "55,7",
+            "10cha4": "5",
+            "n2cha4": "19",
+            "nocha4": "6"
+        },
+        "record_timestamp": "2021-11-17T09:27:52.944+01:00"
+    },
+    {
+        "datasetid": "qualite-de-lair-mesuree-dans-la-station-chatelet",
+        "recordid": "b471338f2134bd1f121caedba36f96b012cd1ac7",
+        "fields": {
+            "c2cha4": "437",
+            "tcha4": "19,8",
+            "dateheure": "2021-11-14T05:00:00+01:00",
+            "hycha4": "54,6",
+            "10cha4": "7",
+            "n2cha4": "15",
+            "nocha4": "4"
+        },
+        "record_timestamp": "2021-11-17T09:27:52.944+01:00"
+    }
+]

@@ -1,0 +1,20 @@
+canvas {
+    margin: auto;
+    border: 1px solid #aaa;
+    border-radius: 800px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    top: 0;
+    left: 0;
+}
+
+.canvas__container {
+    position: i
+}
+
+body {
+    margin: 0;
+    background:url('./papier-blanc.jpg') no-repeat;
+    background-size: 100vw 100vh;
+}
