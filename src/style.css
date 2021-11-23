@@ -1,8 +1,8 @@
 canvas {
     margin: auto;
     border: 1px solid #aaa;
-    border-radius: 800px;
-    position: absolute;
+ /*     border-radius: 800px;
+    */  position: absolute;
     bottom: 0;
     right: 0;
     top: 0;
@@ -23,6 +23,27 @@ img {
 body {
     margin: 0;
     padding:0;
+    outline: none;
     background:url('./papier-blanc.jpg') no-repeat;
     background-size: 100vw 100vh;
+}
+
+.hours {
+    position: absolute;
+    z-index: 10;
+    color: white;
+    display: flex;
+    margin: auto;
+    justify-content: space-around;
+    bottom: 5%;
+    width: 80%;
+    padding: 0;
+    margin:0;
+    right: 50%;
+    transform: translateX(50%);
+}
+
+.hours li {
+    width: 5%;
+    list-style: none;
 }

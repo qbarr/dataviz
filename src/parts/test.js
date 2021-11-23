@@ -1,12 +1,13 @@
 import * as THREE from 'three';
 import * as dat from 'dat.gui';
 import Magnify3d from 'magnify-3d-new';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 // FPS monitor
 javascript:(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
 
-let camera, scene, renderer, defaultTarget, boxMesh1, boxMesh2;
-let magnify3d, params, gui;
+let camera, scene, renderer, defaultTarget, boxMesh1, boxMesh2,boxMesh4,lights;
+let magnify3d, params, gui,loader,model,sphereMesh,materialTexture;
 let shiftDown, ctrlDown;
 let isGood = true
 const MIN_ZOOM = 1;
@@ -20,39 +21,94 @@ const MAX_OUTLINE_THICKNESS = 50;
 
 function initScene() {
     scene = new THREE.Scene();
+    loader.load(
 
-    const texture = new THREE.TextureLoader().load( 'res/checkerboard.png');
+        './molecule2.gltf',
+        // called when the resource is loadedx
+        function ( gltf ) {
+             gltf.scene.traverse( function ( child )  {
+                if ( child.isMesh ) {
+                    child.geometry.center(); // center here
+                  /*   const texture1 = textureLoader.load('./texture.png',function(texture) {
 
-    const checkerMaterial = new THREE.MeshBasicMaterial( { map: texture } );
+                        let newMaterial =  new THREE.MeshStandardMaterial( {
+                            map: texture
+                        } );
+                        child.material = newMaterial;
+
+                    }) */
+                }
+            });
+            gltf.scene.scale.set(3,3,3) // scale here
+            gltf.scene.position.set(0,2,130)
+            scene.add( gltf.scene );
+            model = gltf.scene
+        }
+    );
+    const textureLoader = new THREE.TextureLoader()
+  
     const normalMaterial = new THREE.MeshNormalMaterial();
+    const physicalmaterial = new THREE.MeshPhysicalMaterial({
+        color:new THREE.Color(0x49ef4),
+        roughness:1,
+        metalness:0
 
+    });
+    lights = {
+        light1:new THREE.PointLight( 0xffffff,1,100),  // soft white light
+        light2:new THREE.PointLight(0xffffff,1,100),
+        light3:new THREE.PointLight(0xffffff,1,100),
+        light4:new THREE.PointLight(0xffffff,1,100),
+        light4:new THREE.AmbientLight(0xffffff),
+    }
+     lights.light1.position.set(0,0,130)
+    lights.light1.intensity =2
+
+    lights.light2.position.set(50,0,130)
+    lights.light2.intensity =2
+
+    lights.light3.position.set(50,100,130)
+    lights.light3.intensity =2 
+
+    lights.light4.position.set(50,150,130)
+    lights.light4.intensity =1
+    const PointLightHelper = new THREE.PointLightHelper(lights.light1,0.2)
+    PointLightHelper.scale.set(10,10,10)
+    scene.add(lights.light1)
+    scene.add(lights.light2)
+    scene.add(lights.light3)
+    scene.add(lights.light4)
+    scene.add(PointLightHelper)
+
+
+    
     const boxGeometry = new THREE.BoxGeometry(20, 20, 20);
-    boxMesh1 = new THREE.Mesh(boxGeometry, checkerMaterial);
+  /*  boxMesh1 = new THREE.Mesh(boxGeometry, checkerMaterial);
     boxMesh1.position.x = 50;
     scene.add(boxMesh1);
 
     boxMesh2 = new THREE.Mesh(boxGeometry, checkerMaterial);
     boxMesh2.position.x = -50;
     scene.add(boxMesh2);
-
-    const boxMesh3 = new THREE.Mesh(boxGeometry, normalMaterial);
+ */
+  /*   const boxMesh3 = new THREE.Mesh(boxGeometry, normalMaterial);
     boxMesh3.position.x = 100;
     scene.add(boxMesh3);
 
-    const boxMesh4 = new THREE.Mesh(boxGeometry, normalMaterial);
+    boxMesh4 = new THREE.Mesh(boxGeometry, normalMaterial);
     boxMesh4.position.x = -100;
-    scene.add(boxMesh4);
+    scene.add(boxMesh4); */
 
-    const sphereGeometry = new THREE.SphereGeometry(10, 64, 64);
+    const PlaneGeometry = new THREE.PlaneGeometry( 300, 300 );
+    const material = new THREE.MeshStandardMaterial( {color: 0x000fff,metalness:1} );
 
-    const sphereMesh = new THREE.Mesh(sphereGeometry, normalMaterial);
-    scene.add(sphereMesh);
-
-   
+    const planeMesh = new THREE.Mesh(PlaneGeometry, material);
+    planeMesh.rotation.x = 200
+    scene.add(planeMesh)
 }
 
 function initCamera() {
-    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 1000);
+    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 10000);
     camera.position.set(0.0, 40.0, 250.0);
     camera.lookAt(0.0, 0.0, 0.0);
 }
@@ -70,6 +126,8 @@ function initRenderer() {
     document.body.appendChild(container);
 
     defaultTarget = new THREE.WebGLRenderTarget(window.innerWidth * pixelRatio, window.innerHeight * pixelRatio); 
+    
+
 }
 
 function initEventListeners() {
@@ -89,6 +147,7 @@ function initEventListeners() {
         camera.clientWidth = window.innerWidth;
         camera.clientHeight = window.innerHeight;
         camera.updateProjectionMatrix();
+        
     });
 
     function onMouseWheel(e) {
@@ -140,14 +199,42 @@ function initEventListeners() {
 
 function initGUI() {
     params = {
-        zoom: 2.0,
+        zoom: 1.0,
         exp: 30.0,
-        radius: 110.0,
+        radius: 500.0,
         outlineThickness: 4.0,
         outlineColor: 0x555555
     }
 
+    console.log(lights);
+
     gui = new dat.GUI();
+    const lightFolder = gui.addFolder('light')
+    lightFolder.add(lights.light1,'intensity',0,100)
+    lightFolder.add(lights.light1.rotation,'x',0,100)
+    lightFolder.add(lights.light1.rotation,'y',0,100)
+    lightFolder.add(lights.light1.rotation,'z',0,100)
+    lightFolder.add(lights.light1.position,'x',0,100)
+    lightFolder.add(lights.light1.position,'y',0,100)
+    lightFolder.add(lights.light1.position,'z',0,100)
+    lightFolder.add(lights.light1.scale,'x',0,100)
+    lightFolder.add(lights.light1.scale,'y',0,100)
+    lightFolder.add(lights.light1.scale,'z',0,100)
+
+    setTimeout(()=> {
+        const moleculeFolder =  gui.addFolder('molecule')
+        moleculeFolder.add(model.position,'x',0,100)
+        moleculeFolder.add(model.position,'y',0,100)
+        moleculeFolder.add(model.position,'z',0,100)
+        moleculeFolder.add(model.rotation,'x',0,100)
+        moleculeFolder.add(model.rotation,'y',0,100)
+        moleculeFolder.add(model.rotation,'z',0,100)
+        moleculeFolder.add(model.scale,'x',0,100)
+        moleculeFolder.add(model.scale,'y',0,100)
+        moleculeFolder.add(model.scale,'z',0,100)
+    },2000)
+  
+
     gui.add(params, 'radius', MIN_RADIUS, MAX_RADIUS);
     gui.add(params, 'zoom', MIN_ZOOM, MAX_ZOOM);
     gui.add(params, 'exp', MIN_EXP, MAX_EXP);
@@ -156,6 +243,8 @@ function initGUI() {
 }
 
 function init() {
+    loader = new GLTFLoader();
+
     initScene();
     initCamera();
     initRenderer();
@@ -166,30 +255,27 @@ function init() {
 }
 
 function renderSceneToTarget(tgt) {
-    if(isGood) {
-        console.log(tgt);
-        isGood = false
-    }
+
     renderer.render(scene, camera, tgt);
 }
 
 function render() {
-        renderSceneToTarget(defaultTarget); // Render original scene to target / screen (depends on defaultTarget).
+       // renderSceneToTarget(defaultTarget)
+
         magnify3d.render({
             renderer,
-            renderSceneCB: target => {
+            renderSceneCB: (target) => {
                 if (target) {
-                                    
                     renderer.setRenderTarget(target);
-                    //onsole.log(target)
                 } else {
-                    renderer.setRenderTarget(null)
+                    renderer.setRenderTarget(defaultTarget);
+
                 }
                 renderer.render(scene, camera);
                   
             },
             pos: params.mouse,
-            zoom: params.zoom,
+            zoom: params.zoom, 
             exp: params.exp,
             radius: params.radius,
             outlineThickness: params.outlineThickness,
@@ -198,15 +284,16 @@ function render() {
             inputBuffer: defaultTarget,
             outputBuffer: undefined
         });
-     
+    //    const controls = new OrbitControls( camera, renderer.domElement );
+       
+
 }
 
 function animate() {
     requestAnimationFrame(animate);
 
-    boxMesh1.rotation.y += 0.01;
-    boxMesh2.rotation.y -= 0.01;
 
+ 
     render();
 }
 

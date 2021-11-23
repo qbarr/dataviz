@@ -1,7 +1,7 @@
 import './style.css'
-import './parts/webgl.js'
+//import './parts/webgl.js'
 import data from "./parts/datas.json"
-//import './parts/test.js'
+import './parts/test.js'
 
 console.log(data[0].fields);
 for (const [key, value] of Object.entries(data[0].fields)) {

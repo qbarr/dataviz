@@ -208,7 +208,7 @@ function initRenderer() {
 function initGUI() {
 	params = {
         zoom: 2.0,
-        exp: 30.0,
+        exp: 1.0,
         radius: 200,
         outlineThickness: 4.0,
         outlineColor: 0x555555
@@ -230,9 +230,9 @@ function initGUI() {
 }
 
 loader.load(
-	// resource URL
+
 	'./molecule1.glb',
-	// called when the resource is loaded
+	// called when the resource is loadedx
 	function ( gltf ) {
         console.log(gltf.asset);
 		scene.add( gltf.scene );
