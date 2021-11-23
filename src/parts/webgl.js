@@ -223,10 +223,7 @@ function initGUI() {
     }
 
     gui = new dat.GUI();
-	const cameraFolder = gui.addFolder('Camera')
-	cameraFolder.add(camera.position,'x',0,30)
-	cameraFolder.add(camera.position,'y',0,30)
-	cameraFolder.add(camera.position,'z',0,30)
+
 
 	const loupeFolder = gui.addFolder('Loupe')
     loupeFolder.add(params, 'radius', MIN_RADIUS, MAX_RADIUS);
