@@ -19,6 +19,7 @@ const MAX_OUTLINE_THICKNESS = 50;
 let camera, scene, renderer,canvas;
 let geometry, material, mesh,controls;
 let mouse,magnify3d,loader,defaultTarget,params,gui;
+let checkerMaterial,normalMaterial;
 let isGood = true
 let boxMesh1,boxMesh2,boxMesh3
 const canvasSize = {
@@ -27,7 +28,7 @@ const canvasSize = {
 }
 function getMousePos(canvas, evt) {
     const rect = canvas.getBoundingClientRect();
-
+    console.log(rect);
     return new THREE.Vector2(
         evt.clientX - rect.left,
         evt.clientY - rect.top 
@@ -70,6 +71,13 @@ function initCamera() {
 	camera.lookAt(0.0, 0.0, 0.0);
 }
 
+function initMaterials() {
+    const texture = new THREE.TextureLoader().load( 'res/checkerboard.png');
+
+    checkerMaterial = new THREE.MeshBasicMaterial( { map: texture } );
+    normalMaterial = new THREE.MeshNormalMaterial();
+}
+
 function initScene() {
 	scene = new THREE.Scene();
 /* 	geometry = new THREE.BoxGeometry( 0.2, 0.2, 0.2 );
@@ -81,11 +89,13 @@ function initScene() {
 		scene.add( mesh);
 	})
  */
-    const texture = new THREE.TextureLoader().load( 'res/checkerboard.png');
+    initMaterials()
+    initMeshes()
+   
+	//scene.background = new THREE.Color( 0x000fff );
+}
 
-    const checkerMaterial = new THREE.MeshBasicMaterial( { map: texture } );
-    const normalMaterial = new THREE.MeshNormalMaterial();
-
+function initMeshes() {
     const boxGeometry = new THREE.BoxGeometry(20, 20, 20);
     boxMesh1 = new THREE.Mesh(boxGeometry, checkerMaterial);
     boxMesh1.position.x = 50;
@@ -107,8 +117,6 @@ function initScene() {
 
     const sphereMesh = new THREE.Mesh(sphereGeometry, normalMaterial);
     scene.add(sphereMesh);
-
-	//scene.background = new THREE.Color( 0x000fff );
 }
 
 function renderSceneToTarget(tgt) {
@@ -208,7 +216,7 @@ function initRenderer() {
 function initGUI() {
 	params = {
         zoom: 2.0,
-        exp: 1.0,
+        exp: 30.0,
         radius: 200,
         outlineThickness: 4.0,
         outlineColor: 0x555555
@@ -230,9 +238,9 @@ function initGUI() {
 }
 
 loader.load(
-
+	// resource URL
 	'./molecule1.glb',
-	// called when the resource is loadedx
+	// called when the resource is loaded
 	function ( gltf ) {
         console.log(gltf.asset);
 		scene.add( gltf.scene );

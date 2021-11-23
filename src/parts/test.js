@@ -9,18 +9,24 @@ javascript:(function(){var script=document.createElement('script');script.onload
 let camera, scene, renderer, defaultTarget, boxMesh1, boxMesh2,boxMesh4,lights;
 let magnify3d, params, gui,loader,model,sphereMesh,materialTexture;
 let shiftDown, ctrlDown;
+let textureLoader,normalMaterial,physicalMaterial
 let isGood = true
 const MIN_ZOOM = 1;
 const MAX_ZOOM = 15;
 const MIN_EXP = 1;
 const MAX_EXP = 100;
 const MIN_RADIUS = 10;
-const MAX_RADIUS = 500;
+const MAX_RADIUS = 2000;
 const MIN_OUTLINE_THICKNESS = 0;
 const MAX_OUTLINE_THICKNESS = 50;
 
 function initScene() {
     scene = new THREE.Scene();
+
+    initTexturesAndMaterials()
+    initLights()
+    initMeshes()
+
     loader.load(
 
         './molecule2.gltf',
@@ -28,15 +34,8 @@ function initScene() {
         function ( gltf ) {
              gltf.scene.traverse( function ( child )  {
                 if ( child.isMesh ) {
-                    child.geometry.center(); // center here
-                  /*   const texture1 = textureLoader.load('./texture.png',function(texture) {
-
-                        let newMaterial =  new THREE.MeshStandardMaterial( {
-                            map: texture
-                        } );
-                        child.material = newMaterial;
-
-                    }) */
+                    child.geometry.center();    
+                
                 }
             });
             gltf.scene.scale.set(3,3,3) // scale here
@@ -45,23 +44,45 @@ function initScene() {
             model = gltf.scene
         }
     );
-    const textureLoader = new THREE.TextureLoader()
+   
   
-    const normalMaterial = new THREE.MeshNormalMaterial();
-    const physicalmaterial = new THREE.MeshPhysicalMaterial({
+
+}
+
+function initMeshes(){
+    const boxGeometry = new THREE.BoxGeometry(20, 20, 20);
+
+    boxMesh4 = new THREE.Mesh(boxGeometry, normalMaterial);
+    boxMesh4.position.x = -100;
+    scene.add(boxMesh4); 
+
+    /* const PlaneGeometry = new THREE.PlaneGeometry( 300, 300 );
+    const material = new THREE.MeshStandardMaterial( {color: 0x000fff,metalness:1} );
+
+    const planeMesh = new THREE.Mesh(PlaneGeometry, material);
+    planeMesh.rotation.x = 200
+    scene.add(planeMesh) */
+}
+
+function initTexturesAndMaterials() {
+    textureLoader = new THREE.TextureLoader()
+    normalMaterial = new THREE.MeshNormalMaterial();
+    physicalMaterial = new THREE.MeshPhysicalMaterial({
         color:new THREE.Color(0x49ef4),
         roughness:1,
         metalness:0
-
     });
+}
+
+function initLights() {
     lights = {
         light1:new THREE.PointLight( 0xffffff,1,100),  // soft white light
         light2:new THREE.PointLight(0xffffff,1,100),
         light3:new THREE.PointLight(0xffffff,1,100),
-        light4:new THREE.PointLight(0xffffff,1,100),
-        light4:new THREE.AmbientLight(0xffffff),
+        lightAmbient:new THREE.AmbientLight(0xffffff,1),
+        lightDirectional:new THREE.DirectionalLight(0xffffff,1)
     }
-     lights.light1.position.set(0,0,130)
+    lights.light1.position.set(0,0,130)
     lights.light1.intensity =2
 
     lights.light2.position.set(50,0,130)
@@ -70,41 +91,19 @@ function initScene() {
     lights.light3.position.set(50,100,130)
     lights.light3.intensity =2 
 
-    lights.light4.position.set(50,150,130)
-    lights.light4.intensity =1
+    lights.lightAmbient.position.set(50,150,130)
+
     const PointLightHelper = new THREE.PointLightHelper(lights.light1,0.2)
-    PointLightHelper.scale.set(10,10,10)
-    scene.add(lights.light1)
+    const light = new THREE.DirectionalLight( 0xFFFFFF );
+    const directionalLightHelper = new THREE.DirectionalLightHelper( lights.lightDirectional, 50);
+     /*scene.add(lights.light1)
     scene.add(lights.light2)
-    scene.add(lights.light3)
-    scene.add(lights.light4)
+    scene.add(lights.light3)  */
+    scene.add(lights.lightDirectional)
+    scene.add(lights.lightAmbient)
+    scene.add(PointLightHelper)
     scene.add(PointLightHelper)
 
-
-    
-    const boxGeometry = new THREE.BoxGeometry(20, 20, 20);
-  /*  boxMesh1 = new THREE.Mesh(boxGeometry, checkerMaterial);
-    boxMesh1.position.x = 50;
-    scene.add(boxMesh1);
-
-    boxMesh2 = new THREE.Mesh(boxGeometry, checkerMaterial);
-    boxMesh2.position.x = -50;
-    scene.add(boxMesh2);
- */
-  /*   const boxMesh3 = new THREE.Mesh(boxGeometry, normalMaterial);
-    boxMesh3.position.x = 100;
-    scene.add(boxMesh3);
-
-    boxMesh4 = new THREE.Mesh(boxGeometry, normalMaterial);
-    boxMesh4.position.x = -100;
-    scene.add(boxMesh4); */
-
-    const PlaneGeometry = new THREE.PlaneGeometry( 300, 300 );
-    const material = new THREE.MeshStandardMaterial( {color: 0x000fff,metalness:1} );
-
-    const planeMesh = new THREE.Mesh(PlaneGeometry, material);
-    planeMesh.rotation.x = 200
-    scene.add(planeMesh)
 }
 
 function initCamera() {
@@ -201,12 +200,11 @@ function initGUI() {
     params = {
         zoom: 1.0,
         exp: 30.0,
-        radius: 500.0,
+        radius: 2000.0,
         outlineThickness: 4.0,
         outlineColor: 0x555555
     }
 
-    console.log(lights);
 
     gui = new dat.GUI();
     const lightFolder = gui.addFolder('light')
@@ -221,7 +219,15 @@ function initGUI() {
     lightFolder.add(lights.light1.scale,'y',0,100)
     lightFolder.add(lights.light1.scale,'z',0,100)
 
+    const lightAmbientFolder = gui.addFolder('lightAmbient')
+    lightAmbientFolder.add(lights.lightAmbient,'intensity',0,4)
+
+    const lightDirectionalFolder = gui.addFolder('lightDirectional')
+    lightDirectionalFolder.add(lights.lightDirectional,'intensity',0,4)
+
     setTimeout(()=> {
+        console.log(model);
+
         const moleculeFolder =  gui.addFolder('molecule')
         moleculeFolder.add(model.position,'x',0,100)
         moleculeFolder.add(model.position,'y',0,100)
@@ -229,9 +235,8 @@ function initGUI() {
         moleculeFolder.add(model.rotation,'x',0,100)
         moleculeFolder.add(model.rotation,'y',0,100)
         moleculeFolder.add(model.rotation,'z',0,100)
-        moleculeFolder.add(model.scale,'x',0,100)
-        moleculeFolder.add(model.scale,'y',0,100)
-        moleculeFolder.add(model.scale,'z',0,100)
+        moleculeFolder.add(model.children[0].material,'metalness',0,1)
+        moleculeFolder.add(model.children[0].material,'roughness',0,1)
     },2000)
   
 
