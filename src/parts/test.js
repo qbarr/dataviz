@@ -4,23 +4,36 @@ import Magnify3d from 'magnify-3d-new';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { RectAreaLightHelper }  from 'three/examples/jsm/helpers/RectAreaLightHelper.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import TWEEN from '@tweenjs/tween.js'
+import {getDatas,getSmallestAndHighest,getDifference,getNormalizeScale,getScaleMolecule} from './datas.js'
+
 // FPS monitor
 javascript:(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
 
+let datas = getDatas()
+
 let camera, scene, renderer, defaultTarget, boxMesh1, boxMesh2,boxMesh4,lights;
-let magnify3d, params, gui,loader,model,sphereMesh,materialTexture;
+let magnify3d, params, gui,loader,model,torusGeometry,torus,torus2,sphereMesh,materialTexture;
 let shiftDown, ctrlDown;
+let circle,circle2
 let textureLoader,normalMaterial,physicalMaterial
+let spheres = []
+let torusBackMaterial,torusFrontMaterial
 let raycaster = new THREE.Raycaster()
 let time = 0
 let isGood = true
-let newMouse
+let newMouse = new THREE.Vector2()
+let transitions = []
+
+for(let i =0;i<50;i++){
+    transitions[i]=true
+}
 const MIN_ZOOM = 1;
 const MAX_ZOOM = 15;
 const MIN_EXP = 1;
 const MAX_EXP = 100;
 const MIN_RADIUS = 10;
-const MAX_RADIUS = 2000;
+const MAX_RADIUS = 100;
 const MIN_OUTLINE_THICKNESS = 0;
 const MAX_OUTLINE_THICKNESS = 50;
 
@@ -28,24 +41,77 @@ function initScene() {
     scene = new THREE.Scene();
 
     initTexturesAndMaterials()
+    textureLoader = new THREE.TextureLoader()
+    normalMaterial = new THREE.MeshNormalMaterial();
+    physicalMaterial = new THREE.MeshPhysicalMaterial({
+        color:new THREE.Color(0x49ef4),
+        roughness:1,
+        metalness:0
+    });
+
     initLights()
-    initMeshes()
+        textureLoader.load(
+            // resource URL
+            './alphatexture.jpg',
+    
+            function ( alphaTexture ) {
+                alphaTexture.repeat.set(0.2, 0.2);
+                initMeshes(alphaTexture)
+            }
+        );
+
 
     loader.load(
 
-        './molecule2.gltf',
+        './newMolecule.gltf',
         // called when the resource is loadedx
         function ( gltf ) {
-             gltf.scene.traverse( function ( child )  {
+         
+            gltf.scene.traverse( function ( child )  {
                 if ( child.isMesh ) {
-                    child.geometry.center();    
-                
+                    child.scale.set(0.7,0.7,0.7)
+                    child.geometry.center(); 
+                    if(child.name[1]==="S") {
+                        const SCALEFACTOR = 1.25
+                        const SCALEFACTORNO =1.8
+                        const scaleSphere = getScaleMolecule(child.name[child.name.length-1])
+                        if(child.name[2]==="P") {
+                            child.scale.set(SCALEFACTOR*child.scale.x*scaleSphere.CO2,SCALEFACTOR*child.scale.y*scaleSphere.CO2,SCALEFACTOR*child.scale.z*scaleSphere.CO2)
+                        } else if(child.name[2]==="Y") {
+                            child.scale.set(SCALEFACTOR*child.scale.x*scaleSphere.NO2,SCALEFACTOR*child.scale.y*scaleSphere.NO2,SCALEFACTOR*child.scale.z*scaleSphere.NO2)
+                        } else if(child.name[2]==="B") {
+                            child.scale.set(SCALEFACTORNO*child.scale.x*scaleSphere.NO,SCALEFACTORNO*child.scale.y*scaleSphere.NO,SCALEFACTORNO*child.scale.z*scaleSphere.NO)
+                        }
+                    }
                 }
             });
-            gltf.scene.position.set(-20,5,0)
+            //MeshPhongMaterial
+            gltf.scene.position.set(0,-4.5,0)
             gltf.scene.rotation.set(0,5.9,5.6)
+            gltf.scene.scale.set(1.1,1.1,1.1)
+            gltf.scene.traverse( function ( child )  {
+                if ( child.isMesh &&  child.name[0]==="S" && child.name[3]==="è") {
+                    spheres.push({
+                        position:child.position,
+                        scale:child.scale
+                    })
+                }
+            });            
+            console.log(spheres);
             scene.add( gltf.scene );
             model = gltf.scene
+
+       /*      const material = new THREE.MeshBasicMaterial( { color: 0xAA1DED} );
+            torusGeometry = new THREE.TorusGeometry( 3, 0.3, 15, 60 );
+            for(let i=0;i<spheres.length;i++){
+                torus = new THREE.Mesh( torusGeometry, material );
+                torus.position.set(spheres[i].position.x,spheres[i].position.y,spheres[i].position.z)
+                torus.scale.set(spheres[i].scale.x,spheres[i].scale.y,spheres[i].scale.z)
+                scene.add( torus );
+            }
+          */
+
+     
         }
     );
    
@@ -53,18 +119,43 @@ function initScene() {
 
 }
 
-function initMeshes(){
+function initMeshes(alphaTexture){
     const boxGeometry = new THREE.BoxGeometry(2, 2, 2);
 
     boxMesh4 = new THREE.Mesh(boxGeometry, normalMaterial);
     boxMesh4.position.x = 0;
     scene.add(boxMesh4); 
 
-    const geometry = new THREE.CircleGeometry( 1.5, 32 );
-    const material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
-    const circle = new THREE.Mesh( geometry, material );
-    circle.position.set(-0.2,10.5,-4)
-    scene.add( circle );
+    torusBackMaterial = new THREE.MeshPhongMaterial( { color: 0xAA1DED,transparent :true,opacity:0} );
+    torusFrontMaterial = new THREE.MeshPhongMaterial( { color: 0xE2C5FF,transparent:true,opacity:0});
+    const circleMaterial = new THREE.MeshBasicMaterial( { color: 0xAA1DED,alphaMap:alphaTexture} );
+
+/*     const circleGeometry = new THREE.CircleGeometry( 1.5, 32 );
+    circle = new THREE.Mesh( circleGeometry, material );
+    circle.position.set(-0.3,10.7,5)
+    circle.scale.set(1.02,1.02,1.02)
+    //scene.add( circle ); 
+    circle2 = new THREE.Mesh( circleGeometry, newMaterial );
+    circle2.position.set(-0.3,10.7,-4)
+    scene.add( circle2);  */
+
+    torusGeometry = new THREE.TorusGeometry( 1.5, 0.2, 15, 60 );
+    torus = new THREE.Mesh( torusGeometry, torusBackMaterial );
+    torus.position.set(-0.3,10.7,-3.95)
+    scene.add( torus );
+    torus2 = new THREE.Mesh( torusGeometry, torusFrontMaterial );
+    torus2.position.set(-0.3,10.7,-4)
+    scene.add( torus2)
+
+    createTonusAt(-2.5,11,1.4)
+    //createCircleAt(-2.5,11,1.4)
+    createTonusAt(-9,12,2.7)
+    createTonusAt(-14.25,9,1.5) 
+    createTonusAt(-17.75,10.5,1) 
+    createTonusAt(-19.8,7,1.3) 
+    document.addEventListener('click',()=> {
+        transitionOpacityTorus(1,0)
+    })
 
     /* const PlaneGeometry = new THREE.PlaneGeometry( 300, 300 );
     const material = new THREE.MeshStandardMaterial( {color: 0x000fff,metalness:1} );
@@ -74,14 +165,31 @@ function initMeshes(){
     scene.add(planeMesh) */
 }
 
+function createTonusAt(posx,posy,scale)  {
+    const torusCloneBack = torus.clone()
+    const torusCloneFront = torus2.clone()
+    torusCloneFront.position.set(posx,posy,-4)
+    torusCloneFront.scale.set(scale,scale,scale)
+    torusCloneBack.position.set(posx,posy,-3.95)
+    torusCloneBack.scale.set(scale,scale,scale)
+    scene.add(torusCloneFront)
+    scene.add(torusCloneBack)
+}
+
+function createCircleAt(posx,posy,scale)  {
+    const circleCloneBack = circle.clone()
+    const circleCloneFront = circle2.clone()
+    circleCloneFront.position.set(posx,posy,-4)
+    circleCloneFront.scale.set(scale,scale,scale)
+    circleCloneBack.position.set(posx,posy,-3.95)
+    circleCloneBack.scale.set(scale,scale,scale)
+    scene.add(circleCloneFront)
+    scene.add(circleCloneBack)
+}
+
+
 function initTexturesAndMaterials() {
-    textureLoader = new THREE.TextureLoader()
-    normalMaterial = new THREE.MeshNormalMaterial();
-    physicalMaterial = new THREE.MeshPhysicalMaterial({
-        color:new THREE.Color(0x49ef4),
-        roughness:1,
-        metalness:0
-    });
+ 
 }
 
 function initLights() {
@@ -152,7 +260,6 @@ function initRenderer() {
 function initEventListeners() {
     document.addEventListener('mousemove', (e) => {
         params.mouse = new THREE.Vector2(e.clientX, window.innerHeight - e.clientY);
-        newMouse = new THREE.Vector2()
         newMouse.x = ( e.clientX / window.innerWidth ) * 2 - 1;
 	    newMouse.y = - ( e.clientY / window.innerHeight ) * 2 + 1;
     });
@@ -223,7 +330,7 @@ function initGUI() {
     params = {
         zoom: 1.0,
         exp: 30.0,
-        radius: 2000.0,
+        radius: 100.0,
         outlineThickness: 4.0,
         outlineColor: 0x555555
     }
@@ -293,7 +400,31 @@ function initGUI() {
     loupeFolder.add(params, 'outlineThickness', MIN_OUTLINE_THICKNESS, MAX_OUTLINE_THICKNESS);
     loupeFolder.addColor(params, 'outlineColor');
 
+    setTimeout(() => {
+        const torusFolder = gui.addFolder('torus')
+        console.log(torusGeometry.parameters.tube);
+        torusFolder.add(torusGeometry.parameters,'radius',1,5).onChange(generateGeometry)
+        torusFolder.add(torusGeometry.parameters,'tube',0.1,0.7).onChange(generateGeometry)
+        torusFolder.add(torusGeometry.parameters,'radialSegments',5,50).onChange(generateGeometry)
+        torusFolder.add(torusGeometry.parameters,'tubularSegments',10,100).onChange(generateGeometry)
+        torusFolder.add(torus.position,'x',0,7)
+        torusFolder.add(torus.position,'y',0,12)
+        torusFolder.add(torus.position,'z',-5,7)
+    }, 1000)
+
+ 
     gui.add(renderer,'physicallyCorrectLights')
+}
+
+function generateGeometry() {
+   let newTorus =  new THREE.TorusBufferGeometry(
+       torusGeometry.parameters.radius,
+       torusGeometry.parameters.tube,
+       torusGeometry.parameters.radialSegments,
+       torusGeometry.parameters.tubularSegments
+    )
+    torus2.geometry.dispose()
+    torus2.geometry = newTorus
 }
 
 function init() {
@@ -304,10 +435,28 @@ function init() {
     initRenderer();
     initEventListeners();
     initGUI();
+
     magnify3d = new Magnify3d();
     console.log(scene.children);
 }
 
+function transitionOpacityTorus(opacity,i) {
+  /*   if(transitions[i]==true) {
+        let tweenon = new TWEEN.Tween(camera.position).to({
+            opacity
+        }, 2000)
+        .onUpdate((object)=> {
+            console.log(object);
+            torusBackMaterial.opacity+=object
+           // console.log(torusFrontMaterial.opacity);
+        })
+        .onComplete(()=> {
+            transitions[i]=true
+        })
+        console.log(transitions[i]);
+        tweenon.start();
+    } */
+}
 function renderSceneToTarget(tgt) {
 
     renderer.render(scene, camera, tgt);
@@ -319,24 +468,36 @@ function render() {
         raycaster.setFromCamera(newMouse, camera );
 
        // calculate objects intersecting the picking ray
-       
-       const intersects = raycaster.intersectObjects( scene.children.filter((children,i)  => children.name==="Scene") );
-    
+        
+        const intersects = raycaster.intersectObjects( scene.children.filter((children,i)  => children.name[1]==="S") );
+        if(intersects.length===0) {
+           /*  torusFrontMaterial.opacity-=time
+            if(time<=0.0) time =0.0
+            if(time>0.0) time -=0.001  */
+        }
+        
+     
        for ( let i = 0; i < intersects.length; i ++ ) {
-            //ntersects[ i ].object.scale.set(3,3,3);
-            const transition = 1.5+(Math.sin(time)*0.5);
-            intersects[i].object.scale.set(transition,transition,transition)
-            time +=0.01
-       }
+           /*   const transition = 1.5+(Math.sin(time)*0.5);
+            intersects[i].object.scale.set(transition,transition,transition) 
+             if(time>1.0) time =1.0
 
-        magnify3d.render({  
+            if(torusFrontMaterial.opacity<=1) torusFrontMaterial.opacity+=time 
+            if(torusFrontMaterial.opacity===0)  time =0.0
+
+            time +=0.001  */
+      
+       } 
+ 
+
+       renderer.render(scene, camera);
+   /*     magnify3d.render({  
             renderer,
             renderSceneCB: (target) => {
                 if (target) {
                     renderer.setRenderTarget(target);
                 } else {
                     renderer.setRenderTarget(defaultTarget);
-
                 }
                 renderer.render(scene, camera);
                   
@@ -350,18 +511,18 @@ function render() {
             antialias: true,
             inputBuffer: defaultTarget,
             outputBuffer: undefined
-        });
-       
+        }); */
+        
+
+      
 
 }
 
 function animate() {
     requestAnimationFrame(animate);
-
-
+	TWEEN.update()
  
     render();
 }
-
 init();
 animate();
