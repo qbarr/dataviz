@@ -24,7 +24,6 @@ body {
     margin: 0;
     padding:0;
     outline: none;
-    background:url('./papier-blanc.jpg') no-repeat;
     background-size: 100vw 100vh;
 }
 
@@ -46,6 +45,16 @@ body {
 .hours li {
     width: 5%;
     list-style: none;
+    position: relative;
+}
+
+.hours li::after {
+    display: block;
+    background-color: white;
+    height: 2px;
+    width: 10%;
+    position: absolute;
+    right:0;
 }
 
 .hours li:hover {

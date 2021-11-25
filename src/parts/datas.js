@@ -5,19 +5,6 @@ import data from "./datas.json"
 let wantedHours = [8,10,12,14,16,18,20,22]
 let datasGlobal = getDatas()
 
-function addEventTemp() {
-  /*   const thermometre = document.querySelector('.thermometre')
-    const {smallestTemp,highestTemp} = getSmallestAndHighest()
-    document.querySelectorAll('.hours li').forEach((hour,i)=> {
-        hour.addEventListener('click',()=> {
-            //sconst hourInt= parseInt(hour.innerText)
-            const dataAthour = getScaleMolecule(`${i+1}`)
-            const diff =( highestTemp - dataAthour.temp) *10
-            thermometre.style.height = `calc(80% - ${diff}%)`
-        })
-    }) */
-}
-
 function getDatas() {
     let datas = []
     Object.entries(data).forEach((elem,i)=> {
@@ -203,4 +190,4 @@ function getScaleMolecule(position) {
 }
 
 
-export {getDatas,getSmallestAndHighest,getDifference,getNormalizeScale,getScaleMolecule,addEventTemp}
+export {getDatas,getSmallestAndHighest,getDifference,getNormalizeScale,getScaleMolecule}

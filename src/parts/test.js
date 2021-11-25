@@ -2,10 +2,9 @@ import * as THREE from 'three';
 import * as dat from 'dat.gui';
 import Magnify3d from 'magnify-3d-new';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
-import { RectAreaLightHelper }  from 'three/examples/jsm/helpers/RectAreaLightHelper.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import TWEEN from '@tweenjs/tween.js'
-import {getDatas,getSmallestAndHighest,getDifference,getNormalizeScale,getScaleMolecule} from './datas.js'
+import {getDatas,getScaleMolecule} from './datas.js'
 import typefaceFont from 'three/examples/fonts/helvetiker_regular.typeface.json'
 import {TextGeometry} from 'three/examples/jsm/geometries/TextGeometry.js'
 import {FontLoader} from 'three/examples/jsm/loaders/FontLoader.js'
@@ -34,8 +33,8 @@ const MIN_ZOOM = 1;
 const MAX_ZOOM = 15;
 const MIN_EXP = 1;
 const MAX_EXP = 100;
-const MIN_RADIUS = 10;
-const MAX_RADIUS = 100;
+const MIN_RADIUS = 100;
+const MAX_RADIUS = 3000;
 const MIN_OUTLINE_THICKNESS = 0;
 const MAX_OUTLINE_THICKNESS = 50;
 
@@ -67,37 +66,14 @@ function initScene() {
         './newMolecule3.gltf',
         // called when the resource is loadedx
         function ( gltf ) {
-            const params2 = {
-                specular:0x50505,
-                emissive:0x000fff
-            }
-            const materialReplace=  new THREE.MeshPhongMaterial({
-                color:0x000fff,
-                specular : 0x50505,
-                shininess :100,
-                metalness:1,
-                emissive:0x000fff,
-                emissiveIntensity:1.0
-            })
-            const materialMoleculeFolder = gui.addFolder('materialMoleculeFolder')
-            materialMoleculeFolder.addColor(params2, 'specular')
-            .name('specular')
-            .onChange(function() {
-                materialReplace.specular.set(params2.specular);
-            });
-            materialMoleculeFolder.add(materialReplace,'shininess',0,500)
-            materialMoleculeFolder.addColor(params2, 'emissive')
-            .name('emissive')
-            .onChange(function() {
-                materialReplace.emissive.set(params2.emissive);
-            });
-            materialMoleculeFolder.add(materialReplace,'emissiveIntensity',0,10)
-            addGeometryFont2('CO2',0,10,0,1.2,gltf.scene.children[25].material)
+
+
+            addGeometryFont2('CO2',0,12,0,1.2,gltf.scene.children[25].material)
             addGeometryFont2('NO2',0,0,0,1.2,gltf.scene.children[0].material)
             addGeometryFont2('NO',0,-10,0,1.2,gltf.scene.children[40].material)
-            addGeometryFont2('CHATELET',-15,0,-10,4,gltf.scene.children[0].material)
-            addGeometryFont2('14/11/2021',10,10,-10,2,gltf.scene.children[0].material)
-      
+            addGeometryFont2('CHATELET',-22,0,-10,4,gltf.scene.children[0].material)
+            addGeometryFont2('14/11/2021',12,15,-10,2,gltf.scene.children[0].material)
+ 
             gltf.scene.traverse( function ( child )  {
                 if ( child.isMesh ) {
                     child.scale.set(0.7,0.7,0.7)
@@ -135,7 +111,6 @@ function initScene() {
             scene.add( gltf.scene );
             model = gltf.scene
 
-     
         }
     );
    
@@ -192,9 +167,9 @@ function scaleWithDatas(child) {
 function addGeometryFont(group,numberForTextTorus,torus,word) {
     let fontLoader = new FontLoader();
     const textTorus = group==='B' ? datas[numberForTextTorus].NO2 : group==='Y'  ? datas[numberForTextTorus].NO : datas[numberForTextTorus].CO2 
-    
     fontLoader.load(
-        '/fonts/heveltiker_regular.typeface.json', font => {
+        '/fonts/optimer_regular.typeface.json', font => {
+
             const textGeometry = new TextGeometry(
                 word ? word:textTorus.toString(),
                 {
@@ -211,11 +186,17 @@ function addGeometryFont(group,numberForTextTorus,torus,word) {
             text.position.set(torus.position.x,torus.position.y,torus.position.z)
             text.scale.set(torus.scale.x,torus.scale.y,torus.scale.z)
             textGeometry.center()
+            document.dispatchEvent(new Event('mousemove'));
+
             scene.add(text)
+
+            
 
         }
 
     )
+
+
 }
 function addGeometryFont2(word,x,y,z,scale,material) {
     let fontLoader = new FontLoader();
@@ -223,6 +204,7 @@ function addGeometryFont2(word,x,y,z,scale,material) {
     let isDate = word==='14/11/2021' 
     fontLoader.load(
         '/fonts/heveltiker_regular.typeface.json', font => {
+          
             const textGeometry = new TextGeometry(
                 word,
                 {
@@ -248,9 +230,12 @@ function addGeometryFont2(word,x,y,z,scale,material) {
             scene.add(text)
             if(!isChateletOrDate){
                 createTonusAt(x,y,z,scale*1.2,textMaterial,textMaterial.color)
-            } 
+            }            
+            
+
 
         }
+        
     )
 }
 
@@ -282,9 +267,7 @@ function initMeshes(alphaTexture){
 
   
   //  createTonusAt(-19.8,7,1.3,0x000fff,0x000fff) 
-    document.addEventListener('click',()=> {
-        transitionOpacityTorus(1,0)
-    })
+   
 
     /* const PlaneGeometry = new THREE.PlaneGeometry( 300, 300 );
     const material = new THREE.MeshStandardMaterial( {color: 0x000fff,metalness:1} );
@@ -335,34 +318,27 @@ function createTonusAt(posx,posy,posz,scale,material,colorBack)  {
  
 function initLights() {
     lights = {
-        light1:new THREE.PointLight( 0xffffff,1,100),  // soft white light
-        light2:new THREE.PointLight(0xffffff,1,100),
-        light3:new THREE.PointLight(0xffffff,1,100),
-        lightAmbient:new THREE.AmbientLight(0xffffff,2.9),
-        lightDirectional:new THREE.DirectionalLight(0xffffff,3.3),
-        lightRectArea:new THREE.RectAreaLight(0xffffff,6.1 ,20,20)
+        light1:new THREE.PointLight( 0x5E2B7E,1,100),  // soft white light
+        light2:new THREE.PointLight(0x865F33,1,100),
+        light3:new THREE.PointLight(0xF8CE46,1,100),
+        lightAmbient:new THREE.AmbientLight(0xffffff,3.9),
+        lightDirectional:new THREE.DirectionalLight(0xffffff,0.4),
+        lightRectArea:new THREE.RectAreaLight(0xffffff,5 ,20,20)
     }
 
-    const PointLightHelper = new THREE.PointLightHelper(lights.light1,0.2)
-    lights.light1.position.set(0,10,0)
-    lights.light1.intensity =50
-    lights.light1.add(PointLightHelper)
+    lights.light1.position.set(0,12,0)
+    lights.light1.intensity =5
 
     lights.light2.position.set(0,0,0)
-    lights.light2.intensity =50
+    lights.light2.intensity =5
 
     lights.light3.position.set(0,-10,0)
-    lights.light3.intensity =50 
-
-    const directionalLightHelper = new THREE.DirectionalLightHelper( lights.lightDirectional, 50);
-    lights.lightDirectional.add(directionalLightHelper)
+    lights.light3.intensity =0
 
     lights.lightRectArea.position.set(-2,16,16)
     lights.lightRectArea.rotation.set(-1,0,0)
   
 
-    const reactAreaHelper = new RectAreaLightHelper( lights.lightRectArea );
-    lights.lightRectArea.add(reactAreaHelper) 
 
      scene.add(lights.light1)
     scene.add(lights.light2)
@@ -375,7 +351,7 @@ function initLights() {
 
 function initCamera() {
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 10000);
-    camera.position.set(0.0, 0.0, 40.0);
+    camera.position.set(0.0, 0.0, 44.0);
     camera.lookAt(0.0, 0.0, 0.0);
 }
 
@@ -392,9 +368,8 @@ function initRenderer() {
     document.body.appendChild(container);
 
     defaultTarget = new THREE.WebGLRenderTarget(window.innerWidth * pixelRatio, window.innerHeight * pixelRatio); 
-    const controls = new OrbitControls( camera, renderer.domElement );
 
-    renderer.physicallyCorrectLights = true
+    renderer.physicallyCorrectLights = false
     renderer.outputEncoding = THREE.sRGBEncoding
 }
 
@@ -426,57 +401,12 @@ function initEventListeners() {
         
     });
 
-    function onMouseWheel(e) {
-        e.preventDefault();
-        const delta = (e.wheelDelta && e.wheelDelta / 40) || -e.detail;
-
-        if (shiftDown) {
-            params.zoom = Math.min(Math.max(MIN_ZOOM, params.zoom + (delta / 10)), MAX_ZOOM);
-        } else if (ctrlDown) {
-            params.exp = Math.min(Math.max(MIN_EXP, params.exp + delta), MAX_EXP);
-        } else {
-            params.radius = Math.min(Math.max(MIN_RADIUS, params.radius + delta), MAX_RADIUS);
-        }
-
-        gui.updateDisplay();
-    }
-
-    window.addEventListener( 'mousewheel',     onMouseWheel );
-    window.addEventListener( 'DOMMouseScroll', onMouseWheel ); // firefox
-
-    document.addEventListener('keydown', (e) => {
-        const key = e.keyCode;
-        switch (key) {
-            case 16:
-                shiftDown = true;
-                break;
-            case 17:
-                ctrlDown = true;
-                break;    
-            default:
-                break;
-        }
-    });
-
-    document.addEventListener('keyup', (e) => {
-        const key = e.keyCode;
-        switch (key) {
-            case 16:
-                shiftDown = false;
-                break;
-            case 17:
-                ctrlDown = false;
-                break;    
-            default:
-                break;
-        }
-    });
 }
 
 function initGUI() {
     params = {
-        zoom: 1.0,
-        exp: 30.0,
+        zoom: 2.0,
+        exp: 1.0,
         radius: 100.0,
         outlineThickness: 4.0,
         outlineColor: 0x555555
@@ -515,20 +445,6 @@ function initGUI() {
     lightRectAreaRotationFolder.add(lights.lightRectArea.rotation,'y',0,Math.PI*2)
     lightRectAreaRotationFolder.add(lights.lightRectArea.rotation,'z',0,Math.PI*2)
 
-    setTimeout(()=> {
-
-        const moleculeFolder =  gui.addFolder('molecule')
-        const moleculePositionFolder = moleculeFolder.addFolder('position') 
-        moleculePositionFolder.add(model.position,'x',0,100)
-        moleculePositionFolder.add(model.position,'y',-20,20)
-        moleculePositionFolder.add(model.position,'z',0,100)
-        const moleculeRotationFolder = moleculeFolder.addFolder('rotation') 
-        moleculeRotationFolder.add(model.rotation,'x',0,Math.PI*2)
-        moleculeRotationFolder.add(model.rotation,'y',0,Math.PI*2)
-        moleculeRotationFolder.add(model.rotation,'z',0,Math.PI*2)
-        moleculeFolder.add(model.children[6].material,'metalness',0,1)
-        moleculeFolder.add(model.children[6].material,'roughness',0,1)
-    },2000)
   
 	const cameraFolder = gui.addFolder('Camera')
     const cameraPositionFolder = cameraFolder.addFolder('position') 
@@ -546,18 +462,6 @@ function initGUI() {
     loupeFolder.add(params, 'exp', MIN_EXP, MAX_EXP);
     loupeFolder.add(params, 'outlineThickness', MIN_OUTLINE_THICKNESS, MAX_OUTLINE_THICKNESS);
     loupeFolder.addColor(params, 'outlineColor');
-
-    setTimeout(() => {
-        const torusFolder = gui.addFolder('torus')
-        torusFolder.add(torusGeometry.parameters,'radius',1,5).onChange(generateGeometry)
-        torusFolder.add(torusGeometry.parameters,'tube',0.1,0.7).onChange(generateGeometry)
-        torusFolder.add(torusGeometry.parameters,'radialSegments',5,50).onChange(generateGeometry)
-        torusFolder.add(torusGeometry.parameters,'tubularSegments',10,100).onChange(generateGeometry)
-        torusFolder.add(torus.position,'x',0,7)
-        torusFolder.add(torus.position,'y',0,12)
-        torusFolder.add(torus.position,'z',-5,7)
-    }, 1000)
-
  
     gui.add(renderer,'physicallyCorrectLights')
 }
@@ -604,23 +508,6 @@ function init() {
     magnify3d = new Magnify3d();
 }
 
-function transitionOpacityTorus(opacity,i) {
-  /*   if(transitions[i]==true) {
-        let tweenon = new TWEEN.Tween(camera.position).to({
-            opacity
-        }, 2000)
-        .onUpdate((object)=> {
-            console.log(object);
-            torusBackMaterial.opacity+=object
-           // console.log(torusFrontMaterial.opacity);
-        })
-        .onComplete(()=> {
-            transitions[i]=true
-        })
-        console.log(transitions[i]);
-        tweenon.start();
-    } */
-}
 function renderSceneToTarget(tgt) {
 
     renderer.render(scene, camera, tgt);
@@ -630,15 +517,12 @@ function render() {
        // renderSceneToTarget(defaultTarget)
     
         raycaster.setFromCamera(newMouse, camera );
-        if(moleculeBrown.length>0 && moleculePurple.length>0 && moleculeYellow.length>0) {
-            moleculeBrown.forEach((elem)=> {
-               
-            })
-            time+=0.001
-        } else {
-            time = 0
-        }
-        
+     /*    for (const [key, value] of Object.entries(lights)) {
+            value.position.y = Math.sin(time) +2
+        } */
+
+        time+=0.001
+
        // calculate objects intersecting the picking ray
         
         /* const intersects = raycaster.intersectObjects( scene.children.filter((children,i)  => {
@@ -667,7 +551,7 @@ function render() {
        }  */
  
       // renderer.setRenderTarget(defaultTarget)
- /*       magnify3d.render({  
+        magnify3d.render({  
                 renderer,
                 renderSceneCB: (target) => {
                     if (target) {
@@ -687,9 +571,8 @@ function render() {
                 antialias: true,
                 inputBuffer: defaultTarget,
                 outputBuffer: undefined
-        });   */
+        });   
 
-        renderer.render(scene, camera);
 
 }
 
