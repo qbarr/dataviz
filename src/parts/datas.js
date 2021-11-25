@@ -6,7 +6,7 @@ let wantedHours = [8,10,12,14,16,18,20,22]
 let datasGlobal = getDatas()
 
 function addEventTemp() {
-    const thermometre = document.querySelector('.thermometre')
+  /*   const thermometre = document.querySelector('.thermometre')
     const {smallestTemp,highestTemp} = getSmallestAndHighest()
     document.querySelectorAll('.hours li').forEach((hour,i)=> {
         hour.addEventListener('click',()=> {
@@ -15,7 +15,7 @@ function addEventTemp() {
             const diff =( highestTemp - dataAthour.temp) *10
             thermometre.style.height = `calc(80% - ${diff}%)`
         })
-    })
+    }) */
 }
 
 function getDatas() {
@@ -76,7 +76,6 @@ function getSmallestAndHighest() {
         if(data.NO<smallestNO) smallestNO = data.NO
         if(data.temp<smallestTemp) smallestTemp = data.temp
     })
-    console.log(smallestTemp,highestTemp);
     return {highestTemp,smallestTemp,smallestCO2,smallestNO2,smallestNO,highestCO2,highestNO,highestNO2}
 }
 
@@ -95,7 +94,6 @@ function getNormalizeScale() {
     const datas = getDatas()
     let normalizeDatas = []
     datas.forEach((data)=> {
-        console.log(data.temp,highsAndSmalls.highestTemp);
 
         const normalizeData={
             CO2:data.CO2/highsAndSmalls.highestCO2,
@@ -116,10 +114,8 @@ function normalize(val, max, min) {
 function getScaleMolecule(position) {
     let scaleMolecule,normmalizeScaleFilter
     let normalizeScale = getNormalizeScale()
-    console.log(normalizeScale[0].temp,normalizeScale[0].hour,position)
     switch(position) {
         case "1":
-            console.log('coucou');
             normmalizeScaleFilter = normalizeScale.filter(data => data.hour===wantedHours[0])[0]
             scaleMolecule =  {
                 NO2:normmalizeScaleFilter.NO2,
