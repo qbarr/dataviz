@@ -2,14 +2,12 @@ import * as THREE from 'three';
 import * as dat from 'dat.gui';
 import Magnify3d from 'magnify-3d-new';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import {  OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import TWEEN from '@tweenjs/tween.js'
 import {getDatas,getScaleMolecule} from './datas.js'
 import typefaceFont from 'three/examples/fonts/helvetiker_regular.typeface.json'
 import {TextGeometry} from 'three/examples/jsm/geometries/TextGeometry.js'
 import {FontLoader} from 'three/examples/jsm/loaders/FontLoader.js'
-// FPS monitor
-javascript:(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
 
 let datas = getDatas()
 let camera, scene, renderer, defaultTarget, boxMesh1, boxMesh2,boxMesh4,lights;
@@ -139,36 +137,11 @@ function scaleWithDatas(child) {
     }
 }
 
-/* function createGroupeTonus(group,x,y,z) {
-    if(group==='P') {
-        createTonusAt(-2.5+x,11,1.4,0x5E2B7E,0xE2C5FF)
-        //createCircleAt(-2.5,11,1.4)
-        createTonusAt(-9+x,12+y,2.7,0x5E2B7E,0xE2C5FF)
-        createTonusAt(-14.25+x,9+y,1.5,0x5E2B7E,0xE2C5FF) 
-        createTonusAt(-17.75+x,10.5+y,1,0x5E2B7E,0xE2C5FF) 
-        createTonusAt(-19.8+x,7+y,1.3,0x5E2B7E,0xE2C5FF) 
-    } else if(group==='Y') {
-        createTonusAt(-2.5+x,11+y,1.4,0x5E2B7E,0xE2C5FF)
-        //createCircleAt(-2.5,11,1.4)
-        createTonusAt(-9+x,12+y,2.7,0x5E2B7E,0xE2C5FF)
-        createTonusAt(-14.25+x,9+y,1.5,0x5E2B7E,0xE2C5FF) 
-        createTonusAt(-17.75+x,10.5+y,1,0x5E2B7E,0xE2C5FF) 
-        createTonusAt(-19.8+x,7+y,1.3,0x5E2B7E,0xE2C5FF) 
-    }else if(group==='B') {
-        createTonusAt(-2.5+x,11+y,1.4,0x5E2B7E,0xE2C5FF)
-        //createCircleAt(-2.5,11,1.4)
-        createTonusAt(-9+x,12+y,2.7,0x5E2B7E,0xE2C5FF)
-        createTonusAt(-14.25+x,9+y,1.5,0x5E2B7E,0xE2C5FF) 
-        createTonusAt(-17.75+x,10.5+y,1,0x5E2B7E,0xE2C5FF) 
-        createTonusAt(-19.8+x,7+y,1.3,0x5E2B7E,0xE2C5FF) 
-    }
-} */
-
 function addGeometryFont(group,numberForTextTorus,torus,word) {
     let fontLoader = new FontLoader();
     const textTorus = group==='B' ? datas[numberForTextTorus].NO2 : group==='Y'  ? datas[numberForTextTorus].NO : datas[numberForTextTorus].CO2 
     fontLoader.load(
-        '/fonts/optimer_regular.typeface.json', font => {
+        '/fonts/teko-regular.typeface.json', font => {
 
             const textGeometry = new TextGeometry(
                 word ? word:textTorus.toString(),
@@ -203,8 +176,7 @@ function addGeometryFont2(word,x,y,z,scale,material) {
     let isChateletOrDate = word==='CHATELET' || word === '14/11/2021'
     let isDate = word==='14/11/2021' 
     fontLoader.load(
-        '/fonts/heveltiker_regular.typeface.json', font => {
-          
+        '/fonts/phosphate-pro.typeface.json', font => {
             const textGeometry = new TextGeometry(
                 word,
                 {
@@ -223,11 +195,12 @@ function addGeometryFont2(word,x,y,z,scale,material) {
             const text = new THREE.Mesh(textGeometry, textMaterial)
             text.position.set(x,y,z)
             text.scale.set(scale,scale,scale)
-            if(isChateletOrDate) text.rotation.y = 2* Math.PI *0.05
+            if(isChateletOrDate) text.rotation.y = 2* Math.PI *0.10
             if(isDate) text.rotation.y = 2* Math.PI *1.95
             textGeometry.center()
 
             scene.add(text)
+
             if(!isChateletOrDate){
                 createTonusAt(x,y,z,scale*1.2,textMaterial,textMaterial.color)
             }            
@@ -371,6 +344,8 @@ function initRenderer() {
 
     renderer.physicallyCorrectLights = false
     renderer.outputEncoding = THREE.sRGBEncoding
+
+    const orbitControls = new OrbitControls(camera, renderer.domElement)
 }
 
 function initEventListeners() {
