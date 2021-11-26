@@ -106,6 +106,8 @@ function initScene() {
                     })
                 }
             });            
+            scene.background =new THREE.Color(0x010112)
+            //scene.background =new THREE.Color(0x0a0114)
             scene.add( gltf.scene );
             model = gltf.scene
 
@@ -337,6 +339,8 @@ function initRenderer() {
     renderer.setSize(window.innerWidth, window.innerHeight);
 
     const container = document.createElement('div');
+    renderer.domElement.classList.add('webgl')
+    
     container.appendChild(renderer.domElement);
     document.body.appendChild(container);
 
